@@ -1,0 +1,23 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Cadastro</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form (ngSubmit)="cadastrar()">
+    <ion-item>
+      <ion-label position="floating">Email</ion-label>
+      <ion-input type="email" [(ngModel)]="email" name="email" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Senha</ion-label>
+      <ion-input type="password" [(ngModel)]="senha" name="senha" required minlength="6"></ion-input>
+    </ion-item>
+
+    <ion-button expand="full" type="submit" [disabled]="!email || !senha || senha.length < 6" class="ion-margin-top">
+      Cadastrar
+    </ion-button>
+  </form>
+</ion-content>
