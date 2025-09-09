@@ -1,0 +1,7 @@
+{
+  "name": "proggaming",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
