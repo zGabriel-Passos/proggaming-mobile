@@ -82,10 +82,9 @@
           <span *ngIf="!carregando">{{ ehLogin ? 'Entrar' : 'Cadastrar' }}</span>
         </ion-button>
 
-        <ion-button expand="full" fill="outline" class="google-button" (click)="loginComGoogle()"
-          [disabled]="carregando">
+        <ion-button expand="full" class="btn-google" (click)="loginComGoogle()" [disabled]="carregando">
           <ion-icon name="logo-google" slot="start"></ion-icon>
-          Entrar com Google
+          {{ ehLogin ? 'Entrar com Google' : 'Cadastrar com Google' }}
         </ion-button>
       </form>
 

@@ -2,9 +2,21 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Router } from '@angular/router';
+import { Platform } from '@ionic/angular';
 import { Observable, of } from 'rxjs';
 import { map, switchMap, catchError, startWith } from 'rxjs/operators';
-import firebase from 'firebase/compat/app';
+import * as firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
+  setPersistence,
+  browserLocalPersistence
+} from 'firebase/auth';
 
 export interface Usuario {
   uid: string;
@@ -33,7 +45,8 @@ export class AutenticacaoService {
   constructor(
     private afAuth: AngularFireAuth,
     private afs: AngularFirestore,
-    private roteador: Router
+    private roteador: Router,
+    private plataforma: Platform
   ) {
     this.afAuth.authState.subscribe(usuario => {
       if (usuario) {
@@ -63,11 +76,20 @@ export class AutenticacaoService {
           return of(null);
         }
         const base = this.mapearUsuarioFirebase(usuario);
-        return this.afs.doc(`usuarios/${usuario.uid}`).valueChanges().pipe(
-          startWith({}),
-          map(dadosDb => this.mesclarUsuarioComBanco(usuario, dadosDb || {})),
-          catchError(() => of(base))
-        );
+        return new Observable<Usuario>(subscriber => {
+          const ref = firebase.firestore().doc(`usuarios/${usuario.uid}`);
+          const unsubscribe = ref.onSnapshot(
+            snap => {
+              const dadosDb = snap.exists ? snap.data() : {} as any;
+              subscriber.next(this.mesclarUsuarioComBanco(usuario, dadosDb));
+            },
+            erro => {
+              console.error('Firestore listener error:', erro);
+              subscriber.next(base);
+            }
+          );
+          return () => unsubscribe();
+        }).pipe(startWith(base), catchError(() => of(base)));
       })
     );
   }
@@ -105,7 +127,9 @@ export class AutenticacaoService {
       await this.criarDocumentoUsuario(credencial.user);
 
       return this.mapearUsuarioFirebase(credencial.user);
-    } catch (erro) {
+    } catch (erro: any) {
+      if (erro?.code === 'auth/email-already-in-use') {
+      }
       console.error('Erro ao criar usuário:', erro);
       throw erro;
     }
@@ -113,18 +137,30 @@ export class AutenticacaoService {
 
   async logarComGoogle(): Promise<Usuario> {
     try {
-      const provedor = new firebase.auth.GoogleAuthProvider();
+      const auth = getAuth();
+      const provedor = new GoogleAuthProvider();
       provedor.addScope('email');
       provedor.addScope('profile');
 
-      const credencial = await this.afAuth.signInWithPopup(provedor);
-      if (!credencial.user) {
+      await setPersistence(auth, browserLocalPersistence);
+
+      let usuarioFirebase: firebase.User | null = null;
+
+      if (this.plataforma.is('capacitor') || this.plataforma.is('android') || this.plataforma.is('ios')) {
+        await signInWithRedirect(auth, provedor);
+        const resultado = await getRedirectResult(auth);
+        usuarioFirebase = resultado?.user as any;
+      } else {
+        const resultado = await signInWithPopup(auth, provedor);
+        usuarioFirebase = resultado.user as any;
+      }
+
+      if (!usuarioFirebase) {
         throw new Error('Falha no login com Google');
       }
 
-      await this.criarDocumentoUsuario(credencial.user);
-
-      return this.mapearUsuarioFirebase(credencial.user);
+      await this.criarDocumentoUsuario(usuarioFirebase as any);
+      return this.mapearUsuarioFirebase(usuarioFirebase as any);
     } catch (erro) {
       console.error('Erro no login com Google:', erro);
       throw erro;
@@ -133,10 +169,20 @@ export class AutenticacaoService {
 
   async enviarVerificacaoEmail(): Promise<void> {
     const usuario = await this.afAuth.currentUser;
-    if (usuario) {
-      return usuario.sendEmailVerification();
+    if (!usuario) {
+      throw new Error('Nenhum usuário logado');
     }
-    throw new Error('Nenhum usuário logado');
+    try {
+      await usuario.reload();
+      const actionCodeSettings = {
+        url: window?.location?.origin ? `${window.location.origin}/registrar` : 'https://proggamingpage.firebaseapp.com/registrar',
+        handleCodeInApp: true
+      } as any;
+      await usuario.sendEmailVerification(actionCodeSettings);
+    } catch (e) {
+      console.error('Falha ao enviar email de verificação:', e);
+      throw e;
+    }
   }
 
   async enviarEmailRedefinicaoSenha(email: string): Promise<void> {
@@ -161,7 +207,7 @@ export class AutenticacaoService {
       xp: 0,
       fase1Concluida: false,
       fasesHTML: {},
-      codigoAtual: '<!DOCTYPE html> <html> <head></head> <body></body> </html>',
+      codigoAtual: '',
       status: 'disponivel',
       dataCriacao: firebase.firestore.FieldValue.serverTimestamp(),
       ultimoLogin: firebase.firestore.FieldValue.serverTimestamp()

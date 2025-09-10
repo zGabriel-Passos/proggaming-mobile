@@ -39,6 +39,14 @@ export class RegistrarPage implements OnInit, OnDestroy {
     private menuCtrl: MenuController
   ) {}
 
+  async ionViewWillEnter() {
+    await this.menuCtrl.enable(false);
+  }
+
+  async ionViewDidLeave() {
+    await this.menuCtrl.enable(true);
+  }
+
   ngOnInit() {
     setTimeout(() => {
       this.mostrarOverlayCarregamento = false;
@@ -52,14 +60,6 @@ export class RegistrarPage implements OnInit, OnDestroy {
         this.servicoAuth.deslogar();
       }
     });
-  }
-
-  async ionViewWillEnter() {
-    await this.menuCtrl.enable(false);
-  }
-
-  async ionViewDidLeave() {
-    await this.menuCtrl.enable(true);
   }
 
   ngOnDestroy() {
@@ -99,6 +99,7 @@ export class RegistrarPage implements OnInit, OnDestroy {
   async processarAuth() {
     if (!this.email || !this.senha) {
       this.mensagemErro = 'Por favor, preencha todos os campos.';
+      this.mostrarModalBemVindo = true
       return;
     }
 
@@ -127,12 +128,18 @@ export class RegistrarPage implements OnInit, OnDestroy {
       this.roteador.navigateByUrl('/home', { replaceUrl: true });
     } else {
       this.mensagemErro = 'Verifique seu e-mail antes de continuar, cheque o spam do seu email.';
+      try {
+        await this.servicoAuth.enviarVerificacaoEmail();
+        this.apresentarToastSucesso('E-mail de verificação reenviado. Verifique sua caixa de entrada.');
+      } catch {
+        this.apresentarToastErro('Falha ao reenviar e-mail de verificação.');
+      }
       await this.servicoAuth.deslogar();
     }
   }
 
   private async cadastrar() {
-    await this.servicoAuth.criarUsuarioComEmailSenha(this.email, this.senha);
+    const usuario = await this.servicoAuth.criarUsuarioComEmailSenha(this.email, this.senha);
     await this.servicoAuth.enviarVerificacaoEmail();
 
     this.apresentarAlertaSucesso(
@@ -142,6 +149,10 @@ export class RegistrarPage implements OnInit, OnDestroy {
 
     this.eLogin = true;
     this.senha = '';
+
+    if (usuario) {
+      await this.servicoAuth.deslogar();
+    }
   }
 
   async loginComGoogle() {

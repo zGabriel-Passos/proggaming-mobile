@@ -1,0 +1,41 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Editar Perfil</ion-title>
+  </ion-toolbar>
+  </ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card *ngIf="usuario">
+    <ion-card-header>
+      <ion-card-title>Atualize seu perfil</ion-card-title>
+      <ion-card-subtitle>{{ usuario.email }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">Apelido</ion-label>
+        <ion-input [(ngModel)]="apelido" maxlength="25"></ion-input>
+      </ion-item>
+
+      <ion-list>
+        <ion-list-header>
+          <ion-label>Escolha um Avatar</ion-label>
+        </ion-list-header>
+        <ion-grid>
+          <ion-row>
+            <ion-col size="3" *ngFor="let a of avataresDisponiveis">
+              <ion-avatar [class.selected]="avatarUrl === a" (click)="avatarUrl = a">
+                <img [src]="a" />
+              </ion-avatar>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-list>
+
+      <ion-button expand="block" color="primary" (click)="salvar()">Salvar</ion-button>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
+

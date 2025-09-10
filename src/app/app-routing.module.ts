@@ -26,6 +26,10 @@ const routes: Routes = [
   {
     path: 'amigos',
     loadChildren: () => import('./pages/amigos/amigos.module').then( m => m.AmigosPageModule)
+  },
+  {
+    path: 'editar-perfil',
+    loadChildren: () => import('./pages/editar-perfil/editar-perfil.module').then(m => m.EditarPerfilPageModule)
   }
 ];
 

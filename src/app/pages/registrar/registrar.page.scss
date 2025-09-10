@@ -109,9 +109,17 @@ ion-content.auth-content {
 }
 
 .btn-google {
-  --border-color: rgba(255,255,255,0.6);
-  --color: #fff;
+  --background: #ffffff;
+  --color: #073a69;
+  --border-color: #174a80;
+  color: #073a69;
+  background: #ffffff;
+  border: 2px solid #174a80;
   margin-top: 10px;
+}
+
+.btn-google ion-icon {
+  color: #bb0b0b;
 }
 
 .toggle-container {

@@ -1,13 +1,54 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>amigos</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Amigos</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">amigos</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Adicionar amigos</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-input id="apelidoInput" placeholder="Digite o apelido exato…"></ion-input>
+        <ion-button id="btnPesquisar">Pesquisar</ion-button>
+      </ion-item>
+      <p class="ion-text-wrap">Dica: pessoas podem ter o mesmo apelido. Use o e-mail para diferenciar.</p>
+
+      <ion-list>
+        <ion-list-header>
+          <ion-label>Solicitações recebidas</ion-label>
+        </ion-list-header>
+        <ion-item id="listaSolicitacoes">
+          <ion-label>Nenhuma solicitação</ion-label>
+        </ion-item>
+      </ion-list>
+
+      <ion-list>
+        <ion-list-header>
+          <ion-label>Resultados da pesquisa</ion-label>
+        </ion-list-header>
+        <ion-item id="resultadosPesquisa">
+          <ion-label>Sem resultados</ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Seus amigos</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list id="listaAmigos">
+        <ion-item>
+          <ion-label>Nenhum amigo ainda</ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
 </ion-content>

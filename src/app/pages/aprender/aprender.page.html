@@ -1,13 +1,36 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>aprender</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Aprender • Lições</ion-title>
   </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">aprender</ion-title>
-    </ion-toolbar>
   </ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list>
+    <ion-item class="ion-text-wrap">
+      <ion-label>
+        <h2>HTML - minigames</h2>
+        <p>Comece a conhecer o básico da linguagem HTML com minigames!</p>
+      </ion-label>
+      <ion-button slot="end" routerLink="/home" fill="outline">Jogar</ion-button>
+    </ion-item>
+
+    <ion-item class="ion-text-wrap">
+      <ion-label>
+        <h2>CSS - minigames</h2>
+        <p>Comece a conhecer o básico da linguagem CSS com minigames!</p>
+      </ion-label>
+      <ion-button slot="end" routerLink="/home" fill="outline">Jogar</ion-button>
+    </ion-item>
+
+    <ion-item class="ion-text-wrap">
+      <ion-label>
+        <h2>JavaScript - minigames</h2>
+        <p>Comece a conhecer o básico da linguagem JavaScript com minigames!</p>
+      </ion-label>
+      <ion-button slot="end" routerLink="/home" fill="outline">Jogar</ion-button>
+    </ion-item>
+  </ion-list>
 </ion-content>

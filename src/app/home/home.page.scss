@@ -37,6 +37,23 @@ ion-card {
   color: #fff;
 }
 
+.card-bemvindo ion-item {
+  --background: transparent;
+  --color: #fff;
+}
+
+.card-bemvindo h2 {
+  margin: 4px 0 2px;
+  font-size: 16px;
+  font-family: 'Press Start 2P', system-ui, sans-serif;
+}
+
+.card-bemvindo p {
+  margin: 0;
+  opacity: 0.95;
+  font-size: 14px;
+}
+
 .card-perfil-simples ion-item {
   --background: transparent;
   --color: #fff;

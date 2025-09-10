@@ -23,13 +23,13 @@
         <ion-avatar>
           <img [src]="usuario.avatarUrl || usuario.fotoUrl || 'assets/icon/favicon.png'" />
         </ion-avatar>
-        <span>{{ usuario.apelido || usuario.nomeExibicao || 'Usuário' }}</span>
+        <span>{{ usuario.apelido || usuario.email || 'Usuário' }}</span>
       </ion-card-title>
       <ion-card-subtitle>{{ usuario.email }}</ion-card-subtitle>
     </ion-card-header>
     <ion-card-content>
       <p><strong>Nível:</strong> {{ usuario.nivelAtual ?? 1 }} | <strong>XP:</strong> {{ usuario.xp ?? 0 }}</p>
-      <ion-button expand="block" fill="outline" (click)="editarPerfil()">Editar Perfil</ion-button>
+      <ion-button expand="block" fill="solid" color="secondary" (click)="editarPerfil()">Editar Perfil</ion-button>
     </ion-card-content>
   </ion-card>
 

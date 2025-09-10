@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import { AutenticacaoService, Usuario } from '../services/autenticacao';
 import { Subscription } from 'rxjs';
 
@@ -12,7 +13,7 @@ export class HomePage implements OnInit, OnDestroy {
   usuario: Usuario | null = null;
   private subUsuario?: Subscription;
 
-  constructor(private autenticacaoService: AutenticacaoService) {}
+  constructor(private autenticacaoService: AutenticacaoService, private router: Router) {}
 
   async ngOnInit() {
     this.subUsuario = this.autenticacaoService.obterUsuarioAtual().subscribe(u => {
@@ -22,11 +23,11 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   editarPerfil() {
-    console.log('Abrir modal para editar perfil...');
+    this.router.navigateByUrl('/editar-perfil');
   }
 
   instalarAplicativo() {
-    console.log('Instalar PWA...');
+    console.log('Em desenvolvimento');
   }
 
   ngOnDestroy(): void {
