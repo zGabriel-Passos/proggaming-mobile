@@ -1,0 +1,137 @@
+ion-content.auth-content {
+  --background: linear-gradient(90deg, #1a3d63, #073a69, #092b61);
+  color: #fff;
+  font-family: 'Roboto', sans-serif;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a1931;
+  z-index: 9999;
+}
+
+.loading-spinner {
+  transform: scale(1.2);
+  color: #fff;
+}
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100%;
+  padding: 24px 16px 32px;
+}
+
+.logo-section .logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-transform: uppercase;
+  font-family: 'Press Start 2P', system-ui, sans-serif;
+  font-size: 20px;
+}
+
+.logo-section .logo-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 2px 25px 4px rgba(255,255,255,0.1);
+}
+
+.divider {
+  width: 100%;
+  height: 1px;
+  margin: 20px 0 10px;
+  background: rgba(255,255,255,0.2);
+}
+
+.auth-form {
+  width: 100%;
+  max-width: 380px;
+  background: linear-gradient(90deg, #1a3d63, #073a69, #092b61);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 12px;
+  padding: 20px 16px 24px;
+  box-shadow: 0 4px 25px 8px rgba(0,0,0,0.46);
+}
+
+.form-title {
+  text-align: center;
+  margin: 4px 0 10px;
+}
+
+.aviso-email {
+  display: block;
+  text-align: center;
+  font-size: 12px;
+  color: rgb(189, 189, 189);
+  margin-bottom: 8px;
+}
+
+.auth-item {
+  --background: #073a69;
+  --border-radius: 8px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  border: 2px solid rgba(255,255,255,0.4);
+  margin-top: 10px;
+  color: #fff;
+}
+
+.btn-redefinir {
+  width: auto;
+  align-self: center;
+  margin: 8px 0 6px;
+  font-size: 14px;
+}
+
+.btn-auth {
+  --background: #073a69;
+  --border-color: #174a80;
+  --color: #fff;
+  border: 2px solid #174a80;
+  margin-top: 4px;
+}
+
+.btn-auth[disabled] {
+  opacity: 0.8;
+}
+
+.btn-google {
+  --border-color: rgba(255,255,255,0.6);
+  --color: #fff;
+  margin-top: 10px;
+}
+
+.toggle-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.toggle-text {
+  color: #ccc;
+}
+
+.welcome-modal-content .welcome-container {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 12px 16px;
+}
+
+.welcome-image ion-icon {
+  font-size: 64px;
+}
+

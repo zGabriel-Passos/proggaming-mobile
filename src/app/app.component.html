@@ -1,3 +1,41 @@
 <ion-app>
-  <ion-router-outlet></ion-router-outlet>
+  <ion-menu contentId="conteudo-principal" side="start">
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title>Proggaming</ion-title>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content>
+      <ion-list>
+        <ion-item routerLink="/home" routerDirection="root">
+          <ion-icon name="home-outline" slot="start"></ion-icon>
+          <ion-label>Início</ion-label>
+        </ion-item>
+        <ion-item routerLink="/aprender">
+          <ion-icon name="book-outline" slot="start"></ion-icon>
+          <ion-label>Aprender</ion-label>
+        </ion-item>
+        <ion-item routerLink="/amigos">
+          <ion-icon name="person-add-outline" slot="start"></ion-icon>
+          <ion-label>Amigos</ion-label>
+        </ion-item>
+        <ion-item routerLink="/configuracoes">
+          <ion-icon name="settings-outline" slot="start"></ion-icon>
+          <ion-label>Configurações</ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-content>
+
+    <ion-footer>
+      <ion-button expand="block" fill="outline" color="danger" (click)="autenticacaoService.deslogar()">
+        <ion-icon name="log-out-outline" slot="start"></ion-icon>
+        Sair
+      </ion-button>
+    </ion-footer>
+  </ion-menu>
+
+  <div class="ion-page" id="conteudo-principal">
+    <ion-router-outlet></ion-router-outlet>
+  </div>
 </ion-app>

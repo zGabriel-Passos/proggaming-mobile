@@ -8,19 +8,25 @@ const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'login',
+    redirectTo: 'registrar',
     pathMatch: 'full'
-  },
-  {
-    path: 'login',
-    loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)
   },
   {
     path: 'registrar',
     loadChildren: () => import('./pages/registrar/registrar.module').then( m => m.RegistrarPageModule)
   },
-
-
+  {
+    path: 'configuracoes',
+    loadChildren: () => import('./pages/configuracoes/configuracoes.module').then( m => m.ConfiguracoesPageModule)
+  },
+  {
+    path: 'aprender',
+    loadChildren: () => import('./pages/aprender/aprender.module').then( m => m.AprenderPageModule)
+  },
+  {
+    path: 'amigos',
+    loadChildren: () => import('./pages/amigos/amigos.module').then( m => m.AmigosPageModule)
+  }
 ];
 
 @NgModule({

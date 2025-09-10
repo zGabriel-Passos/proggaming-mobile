@@ -1,9 +1,49 @@
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Proggaming</ion-title>
+    <ion-buttons slot="end">
+      <ion-button href="https://www.youtube.com/@ProggamingPage" target="_blank">
+        <ion-icon name="logo-youtube"></ion-icon>
+      </ion-button>
+      <ion-button href="https://www.instagram.com/proggaming_" target="_blank">
+        <ion-icon name="logo-instagram"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
 
-  
+<ion-content fullscreen>
+
+  <ion-card *ngIf="usuario">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-avatar>
+          <img [src]="usuario.avatarUrl || usuario.fotoUrl || 'assets/icon/favicon.png'" />
+        </ion-avatar>
+        <span>{{ usuario.apelido || usuario.nomeExibicao || 'Usuário' }}</span>
+      </ion-card-title>
+      <ion-card-subtitle>{{ usuario.email }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>Nível:</strong> {{ usuario.nivelAtual ?? 1 }} | <strong>XP:</strong> {{ usuario.xp ?? 0 }}</p>
+      <ion-button expand="block" fill="outline" (click)="editarPerfil()">Editar Perfil</ion-button>
+    </ion-card-content>
+  </ion-card>
+
+
+
+  <ion-card>
+    <ion-card-content class="ion-text-center">
+      Problemas ou dúvidas? Contate:
+      <br />
+      <strong>proggamingcontato@gmail.com</strong>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-footer class="ion-text-center">
+    <p>&copy; 2025 Proggaming, Inc.</p>
+  </ion-footer>
 </ion-content>
