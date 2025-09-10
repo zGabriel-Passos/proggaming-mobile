@@ -4,7 +4,7 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Router } from '@angular/router';
 import { Platform } from '@ionic/angular';
 import { Observable, of } from 'rxjs';
-import { switchMap, catchError, startWith } from 'rxjs/operators';
+import { switchMap, catchError, startWith, map } from 'rxjs/operators';
 
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -112,7 +112,7 @@ export class AutenticacaoService {
     return this.usuarioService.criarUsuario(dadosUsuario);
   }
 
-  private mesclarUsuarioComBanco(usuarioFirebase: firebase.User, dadosDb: any): Usuario {
+  private mesclarUsuarioComBanco(usuarioFirebase: firebase.User, dadosDb: any) {
     const base = this.usuarioService.obterUsuario(usuarioFirebase.uid);
     return {
       ...base,
@@ -129,5 +129,16 @@ export class AutenticacaoService {
 
   private ehUsuarioGoogle(usuario: firebase.User): boolean {
     return usuario.providerData?.some(provedor => provedor?.providerId === 'google.com') || false;
+  }
+
+  obterUsuarioAtual() {
+    return this.afAuth.authState.pipe(
+      switchMap(usuario => {
+        if (!usuario) {
+          return of(null);
+        }
+        return this.usuarioService.obterUsuario(usuario.uid)
+      })
+    );
   }
 }

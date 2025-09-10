@@ -30,7 +30,7 @@ export class RegistrarPage implements OnInit, OnDestroy {
   private timerBemVindo?: any;
 
   constructor(
-    private servicoAuth: AutenticacaoService,
+    private autenticacaoService: AutenticacaoService,
     private roteador: Router,
     private toastCtrl: ToastController,
     private loadingCtrl: LoadingController,
@@ -53,11 +53,11 @@ export class RegistrarPage implements OnInit, OnDestroy {
       this.verificarModalBemVindo();
     }, 1000);
 
-    this.inscricaoAuth = this.servicoAuth.obterUsuarioAtual().subscribe(usuario => {
+    this.inscricaoAuth = this.autenticacaoService.obterUsuarioAtual().subscribe(usuario => {
       if (usuario && (usuario.emailVerificado || this.eUsuarioGoogle(usuario))) {
         this.roteador.navigateByUrl('/home', { replaceUrl: true });
       } else if (usuario && !usuario.emailVerificado) {
-        this.servicoAuth.deslogar();
+        this.autenticacaoService.deslogar();
       }
     });
   }
@@ -123,7 +123,7 @@ export class RegistrarPage implements OnInit, OnDestroy {
   }
 
   private async fazerLogin() {
-    const usuario = await this.servicoAuth.logarComEmailSenha(this.email, this.senha);
+    const usuario = await this.autenticacaoService.logarComEmailSenha(this.email, this.senha);
 
     if (usuario?.emailVerificado) {
       this.apresentarToastSucesso('Login realizado com sucesso!');
@@ -131,19 +131,19 @@ export class RegistrarPage implements OnInit, OnDestroy {
     } else {
       this.mensagemErro = 'Verifique seu e-mail antes de continuar, cheque o spam do seu email.';
       try {
-        await this.servicoAuth.enviarVerificacaoEmail();
+        await this.autenticacaoService.enviarVerificacaoEmail();
         this.apresentarToastSucesso('E-mail de verificação reenviado. Verifique sua caixa de entrada.');
       } catch {
         this.apresentarToastErro('Falha ao reenviar e-mail de verificação.');
       }
-      await this.servicoAuth.deslogar();
+      await this.autenticacaoService.deslogar();
     }
   }
 
   private async cadastrar() {
-    const usuario = await this.servicoAuth.criarUsuarioComEmailSenha(this.email, this.senha);
+    const usuario = await this.autenticacaoService.criarUsuarioComEmailSenha(this.email, this.senha);
     try {
-      await this.servicoAuth.enviarVerificacaoEmail();
+      await this.autenticacaoService.enviarVerificacaoEmail();
 
       this.apresentarAlertaSucesso(
         'Conta criada com sucesso!',
@@ -158,7 +158,7 @@ export class RegistrarPage implements OnInit, OnDestroy {
     this.senha = '';
 
     if (usuario) {
-      await this.servicoAuth.deslogar();
+      await this.autenticacaoService.deslogar();
     }
   }
 
@@ -166,7 +166,7 @@ export class RegistrarPage implements OnInit, OnDestroy {
     this.carregando = true;
 
     try {
-      await this.servicoAuth.logarComGoogle();
+      await this.autenticacaoService.logarComGoogle();
       this.apresentarToastSucesso('Login com Google realizado com sucesso!');
       this.roteador.navigateByUrl('/home', { replaceUrl: true });
     } catch (erro: any) {
@@ -189,7 +189,7 @@ export class RegistrarPage implements OnInit, OnDestroy {
     await carregamento.present();
 
     try {
-      await this.servicoAuth.enviarEmailRedefinicaoSenha(this.email);
+      await this.autenticacaoService.enviarEmailRedefinicaoSenha(this.email);
       await carregamento.dismiss();
 
       this.apresentarAlertaSucesso(
