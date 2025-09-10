@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { AutenticacaoService, Usuario } from '../../services/autenticacao';
+import { AutenticacaoService } from '../../services/autenticacao';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { Usuario } from 'src/app/services/usuario';
 
 @Component({
   selector: 'app-editar-perfil',

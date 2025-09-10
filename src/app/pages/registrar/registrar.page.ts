@@ -54,7 +54,7 @@ export class RegistrarPage implements OnInit, OnDestroy {
     }, 1000);
 
     this.inscricaoAuth = this.servicoAuth.obterUsuarioAtual().subscribe(usuario => {
-      if (usuario && (usuario.emailVerificado || this.ehUsuarioGoogle(usuario))) {
+      if (usuario && (usuario.emailVerificado || this.eUsuarioGoogle(usuario))) {
         this.roteador.navigateByUrl('/home', { replaceUrl: true });
       } else if (usuario && !usuario.emailVerificado) {
         this.servicoAuth.deslogar();
@@ -113,6 +113,8 @@ export class RegistrarPage implements OnInit, OnDestroy {
         await this.cadastrar();
       }
     } catch (erro: any) {
+      console.log(erro);
+
       this.mensagemErro = this.obterMensagemErro(erro.code);
       this.apresentarToastErro(this.mensagemErro);
     } finally {
@@ -140,12 +142,17 @@ export class RegistrarPage implements OnInit, OnDestroy {
 
   private async cadastrar() {
     const usuario = await this.servicoAuth.criarUsuarioComEmailSenha(this.email, this.senha);
-    await this.servicoAuth.enviarVerificacaoEmail();
+    try {
+      await this.servicoAuth.enviarVerificacaoEmail();
 
-    this.apresentarAlertaSucesso(
-      'Conta criada com sucesso!',
-      'Verifique seu e-mail para ativar sua conta. Não esqueça de verificar a pasta de spam.'
-    );
+      this.apresentarAlertaSucesso(
+        'Conta criada com sucesso!',
+        'Verifique seu e-mail para ativar sua conta. Não esqueça de verificar a pasta de spam.'
+      );
+    } catch(e) {
+      console.log(e);
+
+    }
 
     this.eLogin = true;
     this.senha = '';
@@ -196,7 +203,7 @@ export class RegistrarPage implements OnInit, OnDestroy {
     }
   }
 
-  private ehUsuarioGoogle(usuario: any): boolean {
+  private eUsuarioGoogle(usuario: any): boolean {
     return usuario.dadosProvedores?.some((provedor: any) => (provedor?.providerId || provedor?.idProvedor) === 'google.com');
   }
 
