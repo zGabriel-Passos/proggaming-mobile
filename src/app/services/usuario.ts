@@ -1,52 +1,60 @@
 import { Injectable } from '@angular/core';
-import {
-  Firestore,
-  collection,
-  doc,
-  collectionData,
-  docData,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  query,
-  orderBy
-} from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 
-export interface Usuario {
-  uid: string;
-  email: string;
-  apelido?: string;
-  avatarUrl?: string;
-  emailVerificado: boolean;
-  nivelAtual?: number;
-  xp?: number;
-  fase1Concluida?: boolean;
-  fasesHTML?: any;
-  fase1?: any;
-  fase2?: any;
-  codigoAtual?: string;
-  status?: string;
+export interface UsuarioDados {
+	uid: string;
+	email: string | null;
+	nomeExibicao?: string | null;
+	fotoUrl?: string | null;
+	emailVerificado: boolean;
+	apelido?: string;
+	avatarUrl?: string;
+	nivelAtual?: number;
+	xp?: number;
+	fase1Concluida?: boolean;
+	fasesHTML?: any;
+	fase1?: any;
+	fase2?: any;
+	codigoAtual?: string;
+	status?: string;
+	dataCriacao?: any;
+	ultimoLogin?: any;
 }
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root'
 })
 export class UsuarioService {
-constructor(private firestore: Firestore){}
 
-  obterUsuario(uid: string): Observable<Usuario> {
-    const usuarioDocRef = doc(this.firestore, `usuarios/${uid}`)
-    return docData(usuarioDocRef) as Observable<Usuario>;
-  }
+	constructor(
+		private afs: AngularFirestore
+	) {}
 
-  criarUsuario(usuario: Usuario) {
-    const usuarioCollectionRef = collection(this.firestore, 'usuarios');
-    return addDoc(usuarioCollectionRef, { ...usuario, createdAt: Date.now() });
-  }
+	async criarOuAtualizarDocumento(usuarioFirebase: any): Promise<void> {
+		const dadosUsuario: UsuarioDados = {
+			uid: usuarioFirebase.uid,
+			email: usuarioFirebase.email,
+			nomeExibicao: usuarioFirebase.displayName,
+			fotoUrl: usuarioFirebase.photoURL,
+			emailVerificado: usuarioFirebase.emailVerified,
+			apelido: usuarioFirebase.displayName || '',
+			avatarUrl: usuarioFirebase.photoURL || '',
+			nivelAtual: 1,
+			xp: 0,
+			fase1Concluida: false,
+			fasesHTML: {},
+			codigoAtual: '',
+			status: 'disponivel',
+			dataCriacao: new Date(),
+			ultimoLogin: new Date()
+		};
 
-  deletarusuario(uid: string) {
-    const usuarioDocRef = doc(this.firestore, `usuarios/${uid}`);
-    return deleteDoc(usuarioDocRef);
-  }
+		const tarefa = this.afs.firestore.doc(`usuarios/${usuarioFirebase.uid}`).set(dadosUsuario, { merge: true });
+		const timeout = new Promise<void>((resolve) => setTimeout(() => resolve(), 8000));
+		await Promise.race([tarefa, timeout]);
+	}
+
+	obterReferenciaUsuario(uid: string) {
+		return this.afs.firestore.doc(`usuarios/${uid}`);
+	}
 }

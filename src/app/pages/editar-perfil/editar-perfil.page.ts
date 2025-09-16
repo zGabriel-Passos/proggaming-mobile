@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AutenticacaoService } from '../../services/autenticacao';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { Usuario } from 'src/app/services/usuario';
+import { UsuarioDados } from 'src/app/services/usuario';
 
 @Component({
   selector: 'app-editar-perfil',
@@ -10,7 +10,7 @@ import { Usuario } from 'src/app/services/usuario';
   standalone: false,
 })
 export class EditarPerfilPage {
-  usuario: Usuario | null = null;
+  usuario: UsuarioDados | null = null;
   apelido: string = '';
   avatarUrl: string = '';
   avataresDisponiveis = [

@@ -30,7 +30,8 @@ import { environment } from '../environments/environment';
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     provideFirestore(() => getFirestore()),
-    provideAuth(() => getAuth())  ],
+    provideAuth(() => getAuth())
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

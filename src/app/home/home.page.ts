@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AutenticacaoService } from '../services/autenticacao';
-import { Usuario } from '../services/usuario';
+import { UsuarioDados } from '../services/usuario';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs';
   standalone: false,
 })
 export class HomePage implements OnInit, OnDestroy {
-  usuario: Usuario | null = null;
+  usuario: UsuarioDados | null = null;
   private subUsuario?: Subscription;
 
   constructor(private autenticacaoService: AutenticacaoService, private router: Router) {}
