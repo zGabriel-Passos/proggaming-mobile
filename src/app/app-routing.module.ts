@@ -30,7 +30,11 @@ const routes: Routes = [
   {
     path: 'editar-perfil',
     loadChildren: () => import('./pages/editar-perfil/editar-perfil.module').then(m => m.EditarPerfilPageModule)
+  },  {
+    path: 'feedbacks',
+    loadChildren: () => import('./pages/feedbacks/feedbacks.module').then( m => m.FeedbacksPageModule)
   }
+
 ];
 
 @NgModule({
