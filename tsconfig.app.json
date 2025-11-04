@@ -11,5 +11,9 @@
   ],
   "include": [
     "src/**/*.d.ts"
+  ],
+  "exclude": [
+    "src/test.ts",
+    "**/*.spec.ts" // Esta linha é crucial. Certifique-se de que ela está lá.
   ]
 }

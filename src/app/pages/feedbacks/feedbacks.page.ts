@@ -1,9 +1,15 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+
 import { Feedback, FeedbackService } from '../../services/feedback.service';
+
 import { Observable } from 'rxjs';
+
 import { AlertController, ToastController, IonModal } from '@ionic/angular';
+
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AngularFireAuth } from '@angular/fire/compat/auth'; // <--- Importe o Auth
+
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+
 
 @Component({
   selector: 'app-feedbacks',
@@ -22,7 +28,7 @@ export class FeedbacksPage implements OnInit {
   currentUserId: string | null = null;
 
   constructor(
-    private feedbackService: FeedbackService,
+    private feedbackService: FeedbackService, 
     private alertController: AlertController,
     private toastController: ToastController,
     private fb: FormBuilder,
@@ -43,6 +49,7 @@ export class FeedbacksPage implements OnInit {
     });
   }
 
+  // --- Funções do Modal ---
 
   async openModalForCreate() {
     if (!this.currentUserId) {
@@ -71,9 +78,12 @@ export class FeedbacksPage implements OnInit {
     this.modal.dismiss(null, 'cancel');
   }
 
+  // --- Envio de Formulário ---
+
   async submitForm() {
     if (this.feedbackForm.invalid) {
       this.feedbackForm.markAllAsTouched();
+      this.presentToast('Por favor, preencha todos os campos corretamente.', 'warning');
       return;
     }
 
@@ -92,11 +102,14 @@ export class FeedbacksPage implements OnInit {
       this.presentToast(message, 'success');
       this.modal.dismiss(null, 'confirm');
 
-    } catch (e) {
+    } catch (e: any) {
       console.error('Erro ao salvar feedback:', e);
-      this.presentToast('Erro ao salvar feedback. Verifique seu login.', 'danger');
+      const errorMessage = e?.message || 'Erro ao salvar feedback. Verifique seu login e permissões.';
+      this.presentToast(errorMessage, 'danger');
     }
   }
+
+  // --- Exclusão ---
 
   async confirmarExclusao(feedback: Feedback) {
     if (feedback.userId !== this.currentUserId) {
@@ -119,10 +132,14 @@ export class FeedbacksPage implements OnInit {
     try {
       await this.feedbackService.deleteFeedback(id);
       this.presentToast('Feedback excluído com sucesso!', 'success');
-    } catch (e) {
-      this.presentToast('Erro ao excluir feedback. Verifique seu login.', 'danger');
+    } catch (e: any) {
+      console.error('Erro ao excluir feedback:', e);
+      const errorMessage = e?.message || 'Erro ao excluir feedback. Verifique seu login e permissões.';
+      this.presentToast(errorMessage, 'danger');
     }
   }
+
+  // --- Helpers ---
 
   async presentToast(message: string, color: string) {
     const toast = await this.toastController.create({
@@ -132,4 +149,10 @@ export class FeedbacksPage implements OnInit {
     });
     toast.present();
   }
+
+  // CORREÇÃO TS2353: Método de formatação de data corrigido
+  public formatarData(timestamp: number): string {
+    return new Date(timestamp).toLocaleDateString('pt-BR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+  }
+
 }

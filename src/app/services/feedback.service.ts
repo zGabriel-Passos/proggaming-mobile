@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, DocumentReference } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { Observable } from 'rxjs';
+import { Observable, from } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
 
 export interface Feedback {
@@ -9,8 +9,8 @@ export interface Feedback {
     autor: string;
     conteudo: string;
     avaliacao: number;
-    data: number;
-    userId: string;
+    data: number; // timestamp em milissegundos
+    userId: string; // ID do usuário que criou o feedback
 }
 
 @Injectable({
@@ -22,8 +22,9 @@ export class FeedbackService {
 
     constructor(
         private afs: AngularFirestore,
-        private afAuth: AngularFireAuth
+        private afAuth: AngularFireAuth // INJEÇÃO VIA CONSTRUTOR: Forma correta que evita o NG0203
     ) {
+        // Ordena os feedbacks por data (o mais recente primeiro)
         this.feedbackCollection = this.afs.collection<Feedback>('feedbacks', ref => ref.orderBy('data', 'desc'));
 
         this.feedbacks = this.feedbackCollection.snapshotChanges().pipe(
@@ -37,6 +38,7 @@ export class FeedbackService {
         );
     }
 
+    /** Adiciona um novo feedback. Obtém o userId do usuário logado. */
     addFeedback(feedback: Omit<Feedback, 'userId' | 'data'>): Promise<DocumentReference> {
         return this.afAuth.authState.pipe(
             take(1),
@@ -59,16 +61,63 @@ export class FeedbackService {
         return this.feedbacks;
     }
 
-    getFeedback(id: string): Observable<Feedback | undefined> {
-        return this.feedbackCollection.doc<Feedback>(id).valueChanges();
-    }
-
+    /**
+     * Atualiza um feedback, verificando antes se o usuário logado é o autor.
+     * @param id ID do documento.
+     * @param feedback Dados para atualização.
+     */
     updateFeedback(id: string, feedback: Partial<Feedback>): Promise<void> {
-        const { userId, ...updateData } = feedback;
-        return this.feedbackCollection.doc(id).update(updateData);
+        return this.afAuth.authState.pipe(
+            take(1),
+            switchMap(user => {
+                if (!user) {
+                    return from(Promise.reject(new Error("Usuário não autenticado.")));
+                }
+
+                // Obtém o documento atual para verificar a autoria
+                return from(this.feedbackCollection.doc(id).get()).pipe(
+                    switchMap(doc => {
+                        const existingFeedback = doc.data() as Feedback;
+
+                        if (!existingFeedback || existingFeedback.userId !== user.uid) {
+                            return from(Promise.reject(new Error("Não autorizado. Você não pode editar o feedback de outra pessoa.")));
+                        }
+
+                        // Remove 'userId' e 'data' da atualização para manter a integridade
+                        const { userId, data, ...updateData } = feedback;
+                        return from(this.feedbackCollection.doc(id).update(updateData));
+                    })
+                );
+            })
+        ).toPromise() as Promise<void>;
     }
 
+    /**
+     * Exclui um feedback, verificando antes se o usuário logado é o autor.
+     * @param id ID do documento.
+     */
     deleteFeedback(id: string): Promise<void> {
-        return this.feedbackCollection.doc(id).delete();
+        return this.afAuth.authState.pipe(
+            take(1),
+            switchMap(user => {
+                if (!user) {
+                    return from(Promise.reject(new Error("Usuário não autenticado.")));
+                }
+
+                // Obtém o documento atual para verificar a autoria
+                return from(this.feedbackCollection.doc(id).get()).pipe(
+                    switchMap(doc => {
+                        const existingFeedback = doc.data() as Feedback;
+
+                        if (!existingFeedback || existingFeedback.userId !== user.uid) {
+                            return from(Promise.reject(new Error("Não autorizado. Você não pode excluir o feedback de outra pessoa.")));
+                        }
+
+                        // Exclui o feedback
+                        return from(this.feedbackCollection.doc(id).delete());
+                    })
+                );
+            })
+        ).toPromise() as Promise<void>;
     }
 }
